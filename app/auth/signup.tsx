@@ -12,7 +12,6 @@ import {
 
 export default function SignupScreen() {
   const { startSignup } = useApp();
-  const [wallet, setWallet] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -36,36 +35,20 @@ export default function SignupScreen() {
         <Text style={[styles.title, { color: textPrimary }]}>
           Create Account
         </Text>
-        <TextInput
-          placeholder="Wallet Address"
-          placeholderTextColor={textSecondary + "99"}
-          value={wallet}
-          onChangeText={setWallet}
-          style={[
-            styles.input,
-            {
-              borderColor: border,
-              color: textPrimary,
-              backgroundColor: isDark ? "#111418" : "#F2F4F7",
-            },
-          ]}
-          autoCapitalize="none"
-        />
-        <TextInput
-          placeholder="Mobile Number"
-          placeholderTextColor={textSecondary + "99"}
-          keyboardType="phone-pad"
-          value={phone}
-          onChangeText={setPhone}
-          style={[
-            styles.input,
-            {
-              borderColor: border,
-              color: textPrimary,
-              backgroundColor: isDark ? "#111418" : "#F2F4F7",
-            },
-          ]}
-        />
+        <View style={[styles.phoneContainer, { backgroundColor: isDark ? "#111418" : "#F2F4F7", borderColor: border }]}>
+          <Text style={[styles.countryCode, { color: textPrimary, borderRightColor: border }]}>+91</Text>
+          <TextInput
+            placeholder="Mobile Number"
+            placeholderTextColor={textSecondary + "99"}
+            keyboardType="phone-pad"
+            value={phone}
+            onChangeText={setPhone}
+            style={[
+              styles.phoneInput,
+              { color: textPrimary },
+            ]}
+          />
+        </View>
         <TextInput
           placeholder="Password"
           placeholderTextColor={textSecondary + "99"}
@@ -96,6 +79,9 @@ export default function SignupScreen() {
             },
           ]}
         />
+        <Text style={[styles.info, { color: textSecondary }]}>
+          We&apos;ll verify your phone number in the next step
+        </Text>
         <TouchableOpacity
           style={[
             styles.primaryBtn,
@@ -107,19 +93,19 @@ export default function SignupScreen() {
                   : 1,
             },
           ]}
-          disabled={password !== confirmPassword}
+          disabled={!phone || password !== confirmPassword}
           onPress={() => {
-            if (password !== confirmPassword) {
+            if (password !== confirmPassword || !phone) {
               return;
             }
-            startSignup(wallet || "0xDEMO", phone, password);
+            // Pass a placeholder for the wallet address - no longer needed in our app flow
+            startSignup("placeholder", phone, password);
             router.push("/auth/link-phone");
           }}
         >
           <Text style={styles.primaryText}>
-            {password !== confirmPassword
-              ? "Passwords do not match"
-              : "Continue"}
+            {!phone ? "Enter phone number" : 
+              password !== confirmPassword ? "Passwords do not match" : "Continue"}
           </Text>
         </TouchableOpacity>
       </View>
@@ -143,6 +129,7 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     textAlign: "center",
     letterSpacing: 0.5,
+    marginBottom: 10,
   },
   input: {
     borderWidth: 1,
@@ -150,6 +137,31 @@ const styles = StyleSheet.create({
     padding: 16,
     fontSize: 16,
     fontWeight: "500",
+  },
+  phoneContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 18,
+    overflow: 'hidden',
+  },
+  countryCode: {
+    fontSize: 16,
+    fontWeight: '600',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    borderRightWidth: 1,
+  },
+  phoneInput: {
+    flex: 1,
+    padding: 16,
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  info: {
+    fontSize: 14,
+    textAlign: 'center',
+    paddingHorizontal: 20,
   },
   primaryBtn: {
     padding: 18,

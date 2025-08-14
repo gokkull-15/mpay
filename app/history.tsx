@@ -1,7 +1,7 @@
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useApp } from "@/contexts/AppContext";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { memo, useCallback } from "react";
 import {
   FlatList,
   StyleSheet,
@@ -10,9 +10,26 @@ import {
   View,
 } from "react-native";
 
+interface HistoryItem {
+  id: string;
+  type: "send" | "receive";
+  amount: number | string;
+  symbol: string;
+  toOrFrom: string;
+  status: "pending" | "success" | "failed" | string;
+  timestamp: string | number | Date;
+}
+
 export default function HistoryScreen() {
   const { history } = useApp();
   const router = useRouter();
+
+  const keyExtractor = useCallback((i: HistoryItem) => i.id, []);
+  const renderItem = useCallback(
+    ({ item }: { item: HistoryItem }) => <HistoryRow item={item} />,
+    []
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
@@ -22,9 +39,9 @@ export default function HistoryScreen() {
         </TouchableOpacity>
       </View>
       <FlatList
-        data={history}
-        keyExtractor={(i) => i.id}
-        renderItem={({ item }) => <HistoryRow item={item} />}
+        data={history as HistoryItem[]}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
         ItemSeparatorComponent={() => (
           <View style={{ height: 1, backgroundColor: "#eee" }} />
         )}
@@ -39,7 +56,7 @@ export default function HistoryScreen() {
   );
 }
 
-function HistoryRow({ item }: any) {
+const HistoryRow = memo(function HistoryRow({ item }: { item: HistoryItem }) {
   const color = item.type === "send" ? "#FF9500" : "#32D74B";
   const icon =
     item.type === "send" ? "paperplane.fill" : "tray.and.arrow.down.fill";
@@ -73,7 +90,7 @@ function HistoryRow({ item }: any) {
       </View>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: "#fff" },

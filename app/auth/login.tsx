@@ -12,7 +12,7 @@ import {
 
 export default function LoginScreen() {
   const { login } = useApp();
-  const [wallet, setWallet] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
   const scheme = useColorScheme();
@@ -33,23 +33,34 @@ export default function LoginScreen() {
       >
         <Text style={[styles.title, { color: textPrimary }]}>mPay</Text>
         <Text style={[styles.subtitle, { color: textSecondary }]}>
-          Login to your wallet
+          Login to your account
         </Text>
-        <TextInput
-          placeholder="Wallet Address"
-          placeholderTextColor={textSecondary + "99"}
-          value={wallet}
-          onChangeText={setWallet}
-          style={[
-            styles.input,
-            {
-              borderColor: border,
+        <View style={[
+          styles.phoneContainer,
+          {
+            borderColor: border,
+            backgroundColor: isDark ? "#111418" : "#F2F4F7",
+          }
+        ]}>
+          <Text style={[
+            styles.countryCode, 
+            { 
               color: textPrimary,
-              backgroundColor: isDark ? "#111418" : "#F2F4F7",
-            },
-          ]}
-          autoCapitalize="none"
-        />
+              borderRightColor: isDark ? '#2A2F36' : '#E0E0E0',
+            }
+          ]}>+91</Text>
+          <TextInput
+            placeholder="Mobile Number"
+            placeholderTextColor={textSecondary + "99"}
+            keyboardType="phone-pad"
+            value={phone}
+            onChangeText={setPhone}
+            style={[
+              styles.phoneInput,
+              { color: textPrimary },
+            ]}
+          />
+        </View>
         <TextInput
           placeholder="Password"
           placeholderTextColor={textSecondary + "99"}
@@ -68,7 +79,9 @@ export default function LoginScreen() {
         <TouchableOpacity
           style={[styles.primaryBtn, { backgroundColor: accent }]}
           onPress={() => {
-            if (login(wallet || "0xDEMO", password)) router.replace("/(tabs)");
+            // For login, we use the phone number directly
+            // Note: We pass a placeholder wallet address to maintain backward compatibility with the context
+            if (login("placeholder", password)) router.replace("/(tabs)");
           }}
         >
           <Text style={styles.primaryText}>Login</Text>
@@ -106,6 +119,26 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderRadius: 18,
+    padding: 16,
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  phoneContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 18,
+    overflow: 'hidden',
+  },
+  countryCode: {
+    fontSize: 16,
+    fontWeight: '500',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    borderRightWidth: 1,
+  },
+  phoneInput: {
+    flex: 1,
     padding: 16,
     fontSize: 16,
     fontWeight: "500",

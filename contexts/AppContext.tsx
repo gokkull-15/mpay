@@ -62,14 +62,14 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = (addr: string, password: string) => {
-    if (!walletAddress || !storedPassword) {
+    if (!phone || !storedPassword) {
       Alert.alert("No Account", "Please sign up first");
       return false;
     }
-    if (addr.trim().toLowerCase() !== walletAddress.toLowerCase()) {
-      Alert.alert("Wallet Mismatch", "Wallet address not found");
-      return false;
-    }
+    
+    // We've changed the login flow to use phone numbers instead of wallet addresses
+    // For demo purposes, we'll ignore the addr parameter and just check the password
+    
     if (password !== storedPassword) {
       Alert.alert("Invalid Password", "Incorrect password");
       return false;
